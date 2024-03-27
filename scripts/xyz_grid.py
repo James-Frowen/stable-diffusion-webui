@@ -33,6 +33,13 @@ def apply_field(field):
 
     return fun
 
+def apply_size():
+    def fun(p, x, xs):
+        textSplit = x.split('x')
+        setattr(p, 'width', int(textSplit[0]))
+        setattr(p, 'height', int(textSplit[1]))
+
+    return fun
 
 def apply_prompt(p, x, xs):
     if xs[0] not in p.prompt and xs[0] not in p.negative_prompt:
@@ -227,7 +234,6 @@ class AxisOptionTxt2Img(AxisOption):
         super().__init__(*args, **kwargs)
         self.is_img2img = False
 
-
 axis_options = [
     AxisOption("Nothing", str, do_nothing, format_value=format_nothing),
     AxisOption("Seed", int, apply_field("seed")),
@@ -270,6 +276,9 @@ axis_options = [
     AxisOption("Refiner checkpoint", str, apply_field('refiner_checkpoint'), format_value=format_remove_path, confirm=confirm_checkpoints_or_none, cost=1.0, choices=lambda: ['None'] + sorted(sd_models.checkpoints_list, key=str.casefold)),
     AxisOption("Refiner switch at", float, apply_field('refiner_switch_at')),
     AxisOption("RNG source", str, apply_override("randn_source"), choices=lambda: ["GPU", "CPU", "NV"]),
+    AxisOption("Image Width", int, apply_field("width")),
+    AxisOption("Image Height", int, apply_field("height")),
+    AxisOption("Image Size", str, apply_size()),
 ]
 
 
